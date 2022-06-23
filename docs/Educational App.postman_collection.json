@@ -1,0 +1,119 @@
+{
+	"info": {
+		"_postman_id": "50c3b539-e353-4352-8f3b-10d0b5b4335a",
+		"name": "Educational App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "USER: Get Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "AUTH: Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"syode5\",\r\n    \"email\": \"demos55@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"role\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH: Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"demo123@gmail.com\",\r\n    \"password\": \"xtsaedsa\",\r\n    \"role\": 0,\r\n    \"name\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AUTH: Renew Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-token",
+								"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjAwMDc5Miwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODQxOTk5Mn0.8YZ0QKNIqrIwxRyqpUdNZy7kfHpXm_JSwdtIpv6dPfU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/renew",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"renew"
+							],
+							"query": [
+								{
+									"key": "X-token",
+									"value": "12312312",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

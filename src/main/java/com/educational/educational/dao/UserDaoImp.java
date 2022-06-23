@@ -22,4 +22,5 @@ public class UserDaoImp implements UserDao {
         List<Users> users = entityManager.createQuery(query, Users.class).getResultList();
         return users;
     }
+
 }

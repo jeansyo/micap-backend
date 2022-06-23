@@ -2,11 +2,10 @@ package com.educational.educational.controllers;
 
 import com.educational.educational.dao.UserDao;
 import com.educational.educational.models.Users;
+import com.educational.educational.utils.InfoJWTUtil;
+import com.educational.educational.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,12 +15,24 @@ public class UserController {
     @Autowired
     private UserDao UserDao;
 
-    @RequestMapping(value = "api/users", method = RequestMethod.GET)
-    public List<Users> getUsers() {
+    @Autowired
+    private JWTUtil jwtUtil;
 
-        return UserDao.getUsers();
+    @Autowired
+    private InfoJWTUtil infoJWTUtil;
+
+    @RequestMapping(value = "api/students", method = RequestMethod.GET)
+    public List<Users> getStudents( @RequestHeader( value = "X-token" ) String token ) {
+
+        String userID = infoJWTUtil.get(token);
+
+        if( userID != null ){
+            return UserDao.getUsers();
+        }
+
+        return null;
+
     }
-
     @RequestMapping(value = "api/user/{code}", method = RequestMethod.GET)
     public Users user(@PathVariable String code) {
 
