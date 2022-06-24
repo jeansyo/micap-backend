@@ -23,7 +23,7 @@ public class AuthDaoImp implements AuthDao {
 
     @Override
     public Users verifyCrendentials(Users user) {
-        String query = "FROM Users WHERE email = :email AND role = :role";
+        String query = "FROM Users WHERE email = :email AND role = :role AND status = 1";
         List<Users> result =  entityManager.createQuery(query, Users.class)
                 .setParameter("email", user.getEmail())
                 .setParameter("role", user.getRole())
@@ -45,7 +45,7 @@ public class AuthDaoImp implements AuthDao {
     @Override
     public boolean createUser(Users user) {
 
-        String query = "FROM Users WHERE email = :email OR name = :name";
+        String query = "FROM Users WHERE email = :email OR name = :name AND status = 1";
 
         List<Users> result = entityManager.createQuery(query, Users.class)
                 .setParameter("email", user.getEmail())
