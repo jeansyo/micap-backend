@@ -141,4 +141,44 @@ public class MaterialController {
     }
 
 
+    @RequestMapping(value = "api/materials/{courseID}/recent", method = RequestMethod.GET)
+    public ResponseEntity<MaterialsResponseBean> getMaterialsRecentByCourse(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID ) {
+
+        MaterialsResponseBean materialsResponseBean = new MaterialsResponseBean();
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        String userID = jwtUtil.getKey(token);
+        if(userID == null) {
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+
+            materialsResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.FORBIDDEN);
+        }
+
+        List<Materials> resultMaterials = MaterialDao.getMaterialsRecent(parseInt(userID));
+
+        if( resultMaterials == null ) {
+            responseBean.setCodeError("409");
+            responseBean.setMsgError("Datos erroneos");
+
+            materialsResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.CONFLICT);
+        }
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Materiales recientes");
+
+        materialsResponseBean.setAPI(responseBean);
+        materialsResponseBean.setResult(resultMaterials);
+
+        return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.OK);
+
+    }
+
+
     }

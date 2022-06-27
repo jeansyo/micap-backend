@@ -1,12 +1,15 @@
 package com.educational.educational.dao;
 
+import ch.qos.logback.core.CoreConstants;
 import com.educational.educational.models.Courses;
 import com.educational.educational.models.Materials;
+import com.educational.educational.models.Users;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -90,6 +93,53 @@ public class MaterialDaoImp implements MaterialDao {
         resultMaterial.setStatus(0);
         entityManager.flush();
         return true;
+
+    }
+
+
+    @Override
+    public List<Materials> getMaterialsRecent(Integer userID) {
+
+        String queryUser = "FROM Users WHERE id = :user AND status = 1";
+        List<Users> resultUser = entityManager.createQuery(queryUser, Users.class)
+                .setParameter("user", userID)
+                .getResultList();
+
+        if(resultUser.isEmpty()) {
+            return null;
+        }
+
+        ArrayList<Materials> resultMaterialRecent = new ArrayList<Materials>();
+
+        String queryCourses = "FROM Courses WHERE user = :user AND status = 1";
+        List<Courses> resultCourses = entityManager.createQuery(queryCourses, Courses.class)
+                .setParameter("user", userID)
+                .getResultList();
+
+        if (resultCourses.isEmpty()) {
+            return resultMaterialRecent;
+        }
+
+        Integer coursesSize = resultCourses.size();
+        System.out.println(coursesSize);
+
+        for(int i = 0; i < coursesSize; i++) {
+            System.out.println(i);
+            System.out.println(resultCourses.get(i).getName());
+
+            String queryCurrentMaterialOfCourse = "FROM Materials WHERE course = :course AND status = 1";
+            List<Materials> resultCurrentMaterialOfCourse = entityManager.createQuery(queryCurrentMaterialOfCourse, Materials.class)
+                    .setParameter("course", resultCourses.get(i).getId())
+                    .getResultList();
+
+            if (!resultCurrentMaterialOfCourse.isEmpty()) {
+                System.out.println(resultCurrentMaterialOfCourse.get(0).getCourse());
+                resultMaterialRecent.add(resultCurrentMaterialOfCourse.get(i));
+            }
+
+        }
+
+        return resultMaterialRecent;
 
     }
 }

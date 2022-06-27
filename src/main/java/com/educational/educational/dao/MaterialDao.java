@@ -10,4 +10,6 @@ public interface MaterialDao {
     boolean createMaterial(Materials material, Integer userID);
 
     boolean deleteMaterial(Integer courseID, Integer materialID, Integer userID);
+
+    List<Materials> getMaterialsRecent(Integer userID);
 }
