@@ -2,7 +2,6 @@ package com.educational.educational.dao;
 
 import com.educational.educational.beans.StudentBean;
 import com.educational.educational.models.Users;
-import com.educational.educational.schemas.StudentsUserSchema;
 
 import java.util.List;
 

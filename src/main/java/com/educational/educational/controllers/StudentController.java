@@ -2,9 +2,7 @@ package com.educational.educational.controllers;
 
 import com.educational.educational.beans.*;
 import com.educational.educational.dao.StudentDao;
-import com.educational.educational.models.Students;
 import com.educational.educational.models.Users;
-import com.educational.educational.schemas.StudentsUserSchema;
 import com.educational.educational.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

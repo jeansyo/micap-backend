@@ -5,7 +5,6 @@ import com.educational.educational.models.Courses;
 import com.educational.educational.models.Materials;
 import com.educational.educational.models.Students;
 import com.educational.educational.models.Users;
-import com.educational.educational.schemas.MaterialsRecentSchema;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

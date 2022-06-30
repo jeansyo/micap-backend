@@ -1,6 +1,5 @@
 package com.educational.educational.beans;
 
-import com.educational.educational.schemas.StudentsUserSchema;
 import lombok.Getter;
 import lombok.Setter;
 

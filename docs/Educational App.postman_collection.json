@@ -6,112 +6,568 @@
 	},
 	"item": [
 		{
-			"name": "Users",
+			"name": "Teachers",
 			"item": [
 				{
-					"name": "USER: Get Users",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": null
-					},
-					"response": []
+					"name": "Materials",
+					"item": [
+						{
+							"name": "MATERIALS: Get Materials",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjA3MjA5Miwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODQ5MTI5Mn0.XMNY1cheOf0gOlyw2dMjteudD1DGOG3uLMXBvxzAXRw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/materials/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"materials",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "MATERIALS: Create Materials",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjA3MjA5Miwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODQ5MTI5Mn0.XMNY1cheOf0gOlyw2dMjteudD1DGOG3uLMXBvxzAXRw",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"CLase 34\",\r\n    \"link\": \"https://www.youtube.com/watch?v=-2J7TCOzORA&list=RDMM-2J7TCOzORA&start_radio=1\",\r\n    \"type\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/materials/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"materials",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "MATERIALS: Delete Materials",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": null
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "AUTH: Register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"syode5\",\r\n    \"email\": \"demos55@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"role\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AUTH: Login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"demo123@gmail.com\",\r\n    \"password\": \"xtsaedsa\",\r\n    \"role\": 0,\r\n    \"name\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AUTH: Renew Token",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjAwMDc5Miwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODQxOTk5Mn0.8YZ0QKNIqrIwxRyqpUdNZy7kfHpXm_JSwdtIpv6dPfU",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/renew",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"renew"
+									],
+									"query": [
+										{
+											"key": "X-token",
+											"value": "12312312",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AUTH: Update Info",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjAwMDc5Miwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODQxOTk5Mn0.8YZ0QKNIqrIwxRyqpUdNZy7kfHpXm_JSwdtIpv6dPfU",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"password\": \"123456\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/profile",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Courses",
+					"item": [
+						{
+							"name": "COURSES: Get Courses",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjA3MjA5Miwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODQ5MTI5Mn0.XMNY1cheOf0gOlyw2dMjteudD1DGOG3uLMXBvxzAXRw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/courses",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "COURSES: Create Courses",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": null
+							},
+							"response": []
+						},
+						{
+							"name": "COURSES: Remove Courses",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": null
+							},
+							"response": []
+						},
+						{
+							"name": "COURSES: Get Course By ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": null
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Students",
+					"item": [
+						{
+							"name": "STUDENTS: Get Students",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": null
+							},
+							"response": []
+						},
+						{
+							"name": "STUDENTS: Add Student To Class",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjM1MDY1NSwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODc2OTg1NX0.WpLVRSLZK3E_JhncAswdJV1k88L1rozUKY-S-_9FpuE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/student/2/CODUSR-375174",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"student",
+										"2",
+										"CODUSR-375174"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "STUDENTS: Remove Student To Class",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjM1MDY1NSwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODc2OTg1NX0.WpLVRSLZK3E_JhncAswdJV1k88L1rozUKY-S-_9FpuE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/student/2/CODUSR-375174",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"student",
+										"2",
+										"CODUSR-375174"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},
 		{
-			"name": "Auth",
+			"name": "Students",
 			"item": [
 				{
-					"name": "AUTH: Register",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"syode5\",\r\n    \"email\": \"demos55@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"role\": 1\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+					"name": "Materials",
+					"item": [
+						{
+							"name": "MATERIALS: Get Materials Recent",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": null
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"register"
-							]
+						{
+							"name": "MATERIALS: Get Materials",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjA3MjA5Miwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODQ5MTI5Mn0.XMNY1cheOf0gOlyw2dMjteudD1DGOG3uLMXBvxzAXRw",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/materials/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"materials",
+										"1"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "AUTH: Login",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"demo123@gmail.com\",\r\n    \"password\": \"xtsaedsa\",\r\n    \"role\": 0,\r\n    \"name\": \"\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+					"name": "Courses",
+					"item": [
+						{
+							"name": "COURSES: Get My Courses",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": null
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"login"
-							]
+						{
+							"name": "COURSES: Get Course By ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjM1MDY1NSwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODc2OTg1NX0.WpLVRSLZK3E_JhncAswdJV1k88L1rozUKY-S-_9FpuE",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/courses/6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"courses",
+										"6"
+									],
+									"query": [
+										{
+											"key": "X-token",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "AUTH: Renew Token",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "X-token",
-								"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjAwMDc5Miwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODQxOTk5Mn0.8YZ0QKNIqrIwxRyqpUdNZy7kfHpXm_JSwdtIpv6dPfU",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/api/renew",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"renew"
-							],
-							"query": [
-								{
-									"key": "X-token",
-									"value": "12312312",
-									"disabled": true
+					"name": "Auth",
+					"item": [
+						{
+							"name": "AUTH: Register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"syode5\",\r\n    \"email\": \"demos55@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"role\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"register"
+									]
 								}
-							]
+							},
+							"response": []
+						},
+						{
+							"name": "AUTH: Login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\": \"demo123@gmail.com\",\r\n    \"password\": \"xtsaedsa\",\r\n    \"role\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AUTH: Renew Token",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMyIsImlhdCI6MTY1NjAwMDc5Miwic3ViIjoiZGVtbzEyM0BnbWFpbC5jb20iLCJpc3MiOiJBdXRoQ29udHJvbGxlciIsImV4cCI6MTY1ODQxOTk5Mn0.8YZ0QKNIqrIwxRyqpUdNZy7kfHpXm_JSwdtIpv6dPfU",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/renew",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"renew"
+									],
+									"query": [
+										{
+											"key": "X-token",
+											"value": "12312312",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AUTH: Update Info",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "X-token",
+										"value": "http://localhost:8080/api/profile",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"new name\",\r\n    \"password\": \"newpassword\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/profile",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"profile"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				}
 			]
 		}

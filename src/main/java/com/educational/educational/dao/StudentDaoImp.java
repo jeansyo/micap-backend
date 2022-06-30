@@ -4,7 +4,6 @@ import com.educational.educational.beans.StudentBean;
 import com.educational.educational.models.Courses;
 import com.educational.educational.models.Students;
 import com.educational.educational.models.Users;
-import com.educational.educational.schemas.StudentsUserSchema;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
