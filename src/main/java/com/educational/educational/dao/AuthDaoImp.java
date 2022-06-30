@@ -1,5 +1,7 @@
 package com.educational.educational.dao;
 
+import com.educational.educational.models.Courses;
+import com.educational.educational.models.Materials;
 import com.educational.educational.models.Users;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
@@ -71,5 +73,29 @@ public class AuthDaoImp implements AuthDao {
             return null;
         }
         return result.get(0);
+    }
+
+    @Override
+    public Users updateInfo(Users user) {
+
+
+        Users resultUser = entityManager.find(Users.class, user.getId());
+
+        if(resultUser == null) {
+            return null;
+        }
+
+        if(resultUser.getStatus() == 0) {
+            return null;
+        }
+
+        if( user.getName() != null ) {
+            resultUser.setName(user.getName());
+        }
+        if( user.getPassword() != null ) {
+            resultUser.setPassword(user.getPassword());
+        }
+        entityManager.flush();
+        return resultUser;
     }
 }

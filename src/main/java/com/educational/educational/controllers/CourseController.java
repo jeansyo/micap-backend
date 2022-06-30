@@ -1,5 +1,7 @@
 package com.educational.educational.controllers;
 
+import com.educational.educational.beans.CourseBean;
+import com.educational.educational.beans.CourseResponseBean;
 import com.educational.educational.beans.CoursesResponseBean;
 import com.educational.educational.beans.ResponseBean;
 import com.educational.educational.dao.CourseDao;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class CourseController {
 
@@ -27,7 +30,7 @@ public class CourseController {
     private JWTUtil jwtUtil;
 
     @RequestMapping(value = "api/courses", method = RequestMethod.GET)
-    public ResponseEntity<CoursesResponseBean> getCoursesById(@RequestHeader( value = "X-token" ) String token ) {
+    public ResponseEntity<CoursesResponseBean> getCourses(@RequestHeader( value = "X-token" ) String token ) {
 
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
@@ -46,28 +49,33 @@ public class CourseController {
 
         }
 
-        List<Courses> result = CourseDao.getCoursesByID(userID);
+        ArrayList<CourseBean> resultCourses = new ArrayList<CourseBean>();
+        List<Courses> result = CourseDao.getCourses(userID);
+
+        result.forEach(course -> {
+            CourseBean courseBean = new CourseBean();
+            courseBean.setId(course.getId());
+            courseBean.setName(course.getName());
+            resultCourses.add(courseBean);
+        });
 
         responseBean.setCodeError("200");
         responseBean.setMsgError("Cursos encontrados");
         coursesResponseBean.setAPI(responseBean);
-        coursesResponseBean.setResult(result);
-
-//        if(result == null) {
-//            return null;
-//        }
+        coursesResponseBean.setResult(resultCourses);
 
         return new ResponseEntity<CoursesResponseBean>(coursesResponseBean, HttpStatus.OK);
 
     }
 
     @RequestMapping(value="api/courses", method=RequestMethod.POST)
-    public ResponseEntity<CoursesResponseBean> createCourse(@RequestHeader(value = "X-token") String token, @RequestBody Courses course) {
+    public ResponseEntity<CourseResponseBean> createCourse(@RequestHeader(value = "X-token") String token, @RequestBody Courses course) {
 
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
+        CourseBean courseBean = new CourseBean();
 
-        CoursesResponseBean coursesResponseBean = new CoursesResponseBean();
+        CourseResponseBean courseResponseBean = new CourseResponseBean();
 
         String userID = jwtUtil.getKey(token);
 
@@ -75,35 +83,38 @@ public class CourseController {
 
             responseBean.setCodeError("401");
             responseBean.setMsgError("Token no valido");
-            coursesResponseBean.setAPI(responseBean);
+            courseResponseBean.setAPI(responseBean);
 
-            return new ResponseEntity<CoursesResponseBean>(coursesResponseBean, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<CourseResponseBean>(courseResponseBean, HttpStatus.FORBIDDEN);
 
         }
 
         course.setUser(parseInt(userID));
 
-        boolean courseCreated = CourseDao.createCourse(course);
+        Courses courseCreated = CourseDao.createCourse(course);
 
-        if(!courseCreated) {
+        if(courseCreated == null) {
             responseBean.setCodeError("409");
             responseBean.setMsgError("El curso con el nombre "+course.getName()+" ya existe.");
-            coursesResponseBean.setAPI(responseBean);
+            courseResponseBean.setAPI(responseBean);
 
-            return new ResponseEntity<CoursesResponseBean>(coursesResponseBean, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<CourseResponseBean>(courseResponseBean, HttpStatus.FORBIDDEN);
         }
+
+        courseBean.setId(courseCreated.getId());
+        courseBean.setName(courseCreated.getName());
 
         responseBean.setCodeError("201");
         responseBean.setMsgError("Curso creado exitosamente.");
-        coursesResponseBean.setAPI(responseBean);
+        courseResponseBean.setAPI(responseBean);
+        courseResponseBean.setResult(courseBean);
 
-        return new ResponseEntity<CoursesResponseBean>(coursesResponseBean, HttpStatus.CREATED);
-
+        return new ResponseEntity<CourseResponseBean>(courseResponseBean, HttpStatus.CREATED);
 
     }
 
     @RequestMapping(value="api/courses/{courseID}", method=RequestMethod.DELETE)
-    public ResponseEntity<CoursesResponseBean> createCourse(@RequestHeader(value = "X-token") String token, @PathVariable String courseID) {
+    public ResponseEntity<CoursesResponseBean> deleteCourse(@RequestHeader(value = "X-token") String token, @PathVariable String courseID) {
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
 
@@ -134,6 +145,94 @@ public class CourseController {
         responseBean.setCodeError("200");
         responseBean.setMsgError("El curso ha sido eliminado.");
         coursesResponseBean.setAPI(responseBean);
+
+        return new ResponseEntity<CoursesResponseBean>(coursesResponseBean, HttpStatus.OK);
+
+    }
+
+
+    @RequestMapping(value = "api/courses/{courseID}", method = RequestMethod.GET)
+    public ResponseEntity<CourseResponseBean> getCourseById(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID ) {
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        CourseBean courseBean = new CourseBean();
+
+        CourseResponseBean courseResponseBean = new CourseResponseBean();
+
+        String userID = jwtUtil.getKey(token);
+
+        if(userID == null) {
+
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+            courseResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<CourseResponseBean>(courseResponseBean, HttpStatus.FORBIDDEN);
+
+        }
+
+        Courses result = CourseDao.getCourseById(courseID);
+
+        if( result == null ) {
+            responseBean.setCodeError("404");
+            responseBean.setMsgError("Curso no encontrado");
+
+            courseResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<CourseResponseBean>(courseResponseBean, HttpStatus.OK);
+
+        }
+
+        courseBean.setName(result.getName());
+        courseBean.setId(result.getId());
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Curso encontrado");
+        courseResponseBean.setAPI(responseBean);
+        courseResponseBean.setResult(courseBean);
+
+        return new ResponseEntity<CourseResponseBean>(courseResponseBean, HttpStatus.OK);
+
+    }
+
+
+
+    @RequestMapping(value = "api/my/courses", method = RequestMethod.GET)
+    public ResponseEntity<CoursesResponseBean> getMyCourses(@RequestHeader( value = "X-token" ) String token ) {
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        CoursesResponseBean coursesResponseBean = new CoursesResponseBean();
+
+        String userID = jwtUtil.getKey(token);
+
+        if(userID == null) {
+
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+            coursesResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<CoursesResponseBean>(coursesResponseBean, HttpStatus.FORBIDDEN);
+
+        }
+
+        ArrayList<CourseBean> resultCourses = new ArrayList<CourseBean>();
+        List<Courses> result = CourseDao.getMyCourses(parseInt(userID));
+
+        result.forEach(course -> {
+            CourseBean courseBean = new CourseBean();
+            courseBean.setName(course.getName());
+            courseBean.setId(course.getId());
+            resultCourses.add(courseBean);
+        });
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Cursos encontrados");
+        coursesResponseBean.setAPI(responseBean);
+        coursesResponseBean.setResult(resultCourses);
 
         return new ResponseEntity<CoursesResponseBean>(coursesResponseBean, HttpStatus.OK);
 

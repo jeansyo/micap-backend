@@ -1,16 +1,15 @@
 package com.educational.educational.beans;
 
+import com.educational.educational.models.Users;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+public class StudentResponseBean {
 
-public class CoursesResponseBean {
-
-    @Getter @Setter
+    @Getter
+    @Setter
     private ResponseBean API;
 
     @Getter @Setter
-    private List<CourseBean> result;
-
+    private StudentBean result;
 }

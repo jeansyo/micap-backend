@@ -3,12 +3,15 @@ package com.educational.educational.beans;
 import lombok.Getter;
 import lombok.Setter;
 
-public class AuthResponseBean {
+public class StudentBean {
 
     @Getter @Setter
-    private ResponseBean API;
-    @Getter @Setter
-    private UserBean user;
+    private String code;
 
+    @Getter @Setter
+    private String email;
+
+    @Getter @Setter
+    private String name;
 
 }

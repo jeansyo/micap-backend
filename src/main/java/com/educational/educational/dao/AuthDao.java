@@ -8,4 +8,6 @@ public interface AuthDao {
     boolean createUser(Users user);
 
     Users getUserByID(String userID);
+
+    Users updateInfo(Users user);
 }

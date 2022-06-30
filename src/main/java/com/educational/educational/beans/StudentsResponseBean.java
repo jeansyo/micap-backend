@@ -1,17 +1,18 @@
 package com.educational.educational.beans;
 
-import com.educational.educational.models.Materials;
+import com.educational.educational.schemas.StudentsUserSchema;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-public class MaterialsResponseBean {
+public class StudentsResponseBean {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private ResponseBean API;
 
     @Getter @Setter
-    private List<MaterialBean> result;
+    private List<StudentBean> result;
 
 }

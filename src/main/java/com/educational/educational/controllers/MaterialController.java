@@ -1,8 +1,6 @@
 package com.educational.educational.controllers;
 
-import com.educational.educational.beans.CoursesResponseBean;
-import com.educational.educational.beans.MaterialsResponseBean;
-import com.educational.educational.beans.ResponseBean;
+import com.educational.educational.beans.*;
 import com.educational.educational.dao.MaterialDao;
 import com.educational.educational.models.Materials;
 import com.educational.educational.utils.JWTUtil;
@@ -11,11 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class MaterialController {
 
@@ -26,7 +26,7 @@ public class MaterialController {
     private JWTUtil jwtUtil;
 
     @RequestMapping(value = "api/materials/{courseID}", method = RequestMethod.GET)
-    public ResponseEntity<MaterialsResponseBean> getCoursesById(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID ) {
+    public ResponseEntity<MaterialsResponseBean> getMaterials(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID ) {
 
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
@@ -54,23 +54,37 @@ public class MaterialController {
             return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.NOT_FOUND);
         }
 
+        ArrayList<MaterialBean> resultsMaterial = new ArrayList<MaterialBean>();
+
+        result.forEach(material -> {
+            MaterialBean materialBean = new MaterialBean();
+            materialBean.setLink(material.getLink());
+            materialBean.setName(material.getName());
+            materialBean.setId(material.getId());
+            materialBean.setType(material.getType());
+            materialBean.setDate(material.getDate());
+
+            resultsMaterial.add(materialBean);
+
+        });
+
         responseBean.setCodeError("200");
         responseBean.setMsgError("Materiales encontrados");
 
         materialsResponseBean.setAPI(responseBean);
-        materialsResponseBean.setResult(result);
+        materialsResponseBean.setResult(resultsMaterial);
 
         return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.OK);
 
     }
 
     @RequestMapping(value = "api/materials/{courseID}", method = RequestMethod.POST)
-    public ResponseEntity<MaterialsResponseBean> createCoursesById(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID, @RequestBody Materials material ) {
+    public ResponseEntity<MaterialResponseBean> createMaterial(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID, @RequestBody Materials material ) {
 
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
 
-        MaterialsResponseBean materialsResponseBean = new MaterialsResponseBean();
+        MaterialResponseBean materialResponseBean = new MaterialResponseBean();
 
         String userID = jwtUtil.getKey(token);
 
@@ -78,33 +92,43 @@ public class MaterialController {
 
             responseBean.setCodeError("401");
             responseBean.setMsgError("Token no valido");
-            materialsResponseBean.setAPI(responseBean);
+            materialResponseBean.setAPI(responseBean);
 
-            return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<MaterialResponseBean>(materialResponseBean, HttpStatus.FORBIDDEN);
 
         }
 
         material.setCourse(courseID);
 
-        boolean materialCreated = MaterialDao.createMaterial(material, parseInt(userID));
-        if(!materialCreated) {
+        Materials materialCreated = MaterialDao.createMaterial(material, parseInt(userID));
+
+        if(materialCreated == null) {
             responseBean.setCodeError("403");
             responseBean.setMsgError("No autorizado");
 
-            materialsResponseBean.setAPI(responseBean);
-            return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.UNAUTHORIZED);
+            materialResponseBean.setAPI(responseBean);
+            return new ResponseEntity<MaterialResponseBean>(materialResponseBean, HttpStatus.UNAUTHORIZED);
         }
+
+        MaterialBean materialBean = new MaterialBean();
+        materialBean.setDate(materialCreated.getDate());
+        materialBean.setName(materialCreated.getName());
+        materialBean.setType(materialCreated.getType());
+        materialBean.setLink(materialCreated.getLink());
+        materialBean.setId(materialCreated.getId());
 
         responseBean.setCodeError("201");
         responseBean.setMsgError("Material creado exitosamente");
+        materialResponseBean.setResult(materialBean);
+        materialResponseBean.setAPI(responseBean);
 
-        materialsResponseBean.setAPI(responseBean);
-        return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.CREATED);
+
+        return new ResponseEntity<MaterialResponseBean>(materialResponseBean, HttpStatus.CREATED);
 
     }
 
     @RequestMapping(value = "api/materials/{courseID}/{materialID}", method = RequestMethod.DELETE)
-    public ResponseEntity<MaterialsResponseBean> getCoursesById(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID, @PathVariable Integer materialID ) {
+    public ResponseEntity<MaterialsResponseBean> deleteMaterial(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID, @PathVariable Integer materialID ) {
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
 
@@ -141,10 +165,10 @@ public class MaterialController {
     }
 
 
-    @RequestMapping(value = "api/materials/{courseID}/recent", method = RequestMethod.GET)
-    public ResponseEntity<MaterialsResponseBean> getMaterialsRecentByCourse(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID ) {
+    @RequestMapping(value = "api/materials/recent", method = RequestMethod.GET)
+    public ResponseEntity<MaterialsRecentResponseBean> getMaterialsRecentByCourse(@RequestHeader( value = "X-token" ) String token ) {
 
-        MaterialsResponseBean materialsResponseBean = new MaterialsResponseBean();
+        MaterialsRecentResponseBean materialsRecentResponseBean = new MaterialsRecentResponseBean();
 
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
@@ -154,29 +178,45 @@ public class MaterialController {
             responseBean.setCodeError("401");
             responseBean.setMsgError("Token no valido");
 
-            materialsResponseBean.setAPI(responseBean);
+            materialsRecentResponseBean.setAPI(responseBean);
 
-            return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<MaterialsRecentResponseBean>(materialsRecentResponseBean, HttpStatus.FORBIDDEN);
         }
 
-        List<Materials> resultMaterials = MaterialDao.getMaterialsRecent(parseInt(userID));
+        List<MaterialRecentBean> resultMaterials = MaterialDao.getMaterialsRecent(parseInt(userID));
 
         if( resultMaterials == null ) {
             responseBean.setCodeError("409");
             responseBean.setMsgError("Datos erroneos");
 
-            materialsResponseBean.setAPI(responseBean);
+            materialsRecentResponseBean.setAPI(responseBean);
 
-            return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.CONFLICT);
+            return new ResponseEntity<MaterialsRecentResponseBean>(materialsRecentResponseBean, HttpStatus.CONFLICT);
         }
+
+//        ArrayList<MaterialBean> resultsMaterials = new ArrayList<MaterialBean>();
+//
+//        resultMaterials.forEach(material -> {
+//
+//            MaterialBean materialBean = new MaterialBean();
+//
+//            materialBean.setId(material.getId());
+//            materialBean.setName(material.getName());
+//            materialBean.setDate(material.getDate());
+//            materialBean.setLink(material.getLink());
+//            materialBean.setType(material.getType());
+//
+//            resultsMaterials.add(materialBean);
+//
+//        });
 
         responseBean.setCodeError("200");
         responseBean.setMsgError("Materiales recientes");
 
-        materialsResponseBean.setAPI(responseBean);
-        materialsResponseBean.setResult(resultMaterials);
+        materialsRecentResponseBean.setAPI(responseBean);
+        materialsRecentResponseBean.setResult(resultMaterials);
 
-        return new ResponseEntity<MaterialsResponseBean>(materialsResponseBean, HttpStatus.OK);
+        return new ResponseEntity<MaterialsRecentResponseBean>(materialsRecentResponseBean, HttpStatus.OK);
 
     }
 

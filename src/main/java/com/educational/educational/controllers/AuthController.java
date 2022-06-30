@@ -1,7 +1,7 @@
 package com.educational.educational.controllers;
 
 import com.educational.educational.beans.AuthResponseBean;
-import com.educational.educational.beans.UserResponseBean;
+import com.educational.educational.beans.UserBean;
 import com.educational.educational.dao.AuthDao;
 import com.educational.educational.beans.ResponseBean;
 import com.educational.educational.models.Users;
@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+import static java.lang.Integer.parseInt;
+
+@CrossOrigin(origins = "*")
 @RestController
 public class AuthController {
 
@@ -31,7 +34,7 @@ public class AuthController {
 
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
-        UserResponseBean userResponseBean = new UserResponseBean();
+        UserBean userResponseBean = new UserBean();
 
         Users isUser = AuthDao.verifyCrendentials(user);
 
@@ -75,7 +78,7 @@ public class AuthController {
     public ResponseEntity<AuthResponseBean> authRegister(@RequestBody Users user) {
 
         ResponseBean response = new ResponseBean();
-        UserResponseBean userResponseBean = new UserResponseBean();
+        UserBean userResponseBean = new UserBean();
         AuthResponseBean authResponseBean = new AuthResponseBean();
         response.setDate(new Date().toString());
 
@@ -109,7 +112,7 @@ public class AuthController {
 
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
-        UserResponseBean userResponseBean = new UserResponseBean();
+        UserBean userResponseBean = new UserBean();
 
         String userID = jwtUtil.getKey(token);
 
@@ -150,6 +153,54 @@ public class AuthController {
         authResponseBean.setUser(userResponseBean);
 
         return new ResponseEntity<AuthResponseBean>(authResponseBean, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "api/profile", method = RequestMethod.PUT)
+    public ResponseEntity<AuthResponseBean> authChangeProfile(@RequestHeader(value = "X-token") String token, @RequestBody Users user) {
+
+        AuthResponseBean authResponseBean = new AuthResponseBean();
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+        UserBean userResponseBean = new UserBean();
+
+        String userID = jwtUtil.getKey(token);
+
+        if(userID == null) {
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+            authResponseBean.setAPI(responseBean);
+            authResponseBean.setUser(userResponseBean);
+
+            return new ResponseEntity<AuthResponseBean>(authResponseBean, HttpStatus.FORBIDDEN);
+
+        }
+
+        if( user.getPassword() != null ) {
+            Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
+            String hash = argon2.hash(1, 1024, 1, user.getPassword());
+            user.setPassword(hash);
+        }
+
+        user.setId(parseInt(userID));
+
+        Users updatedUser = AuthDao.updateInfo(user);
+
+        if(updatedUser == null) {
+            responseBean.setCodeError("403");
+            responseBean.setMsgError("No autorizado");
+            authResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<AuthResponseBean>(authResponseBean, HttpStatus.FORBIDDEN);
+        }
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Informacion actualizada exitosamente");
+        authResponseBean.setAPI(responseBean);
+
+        return new ResponseEntity<AuthResponseBean>(authResponseBean, HttpStatus.FORBIDDEN);
+
     }
 
 }

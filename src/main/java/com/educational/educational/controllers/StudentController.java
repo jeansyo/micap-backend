@@ -1,11 +1,10 @@
 package com.educational.educational.controllers;
 
-import com.educational.educational.beans.AuthResponseBean;
-import com.educational.educational.beans.CoursesResponseBean;
-import com.educational.educational.beans.ResponseBean;
-import com.educational.educational.dao.CourseDao;
+import com.educational.educational.beans.*;
 import com.educational.educational.dao.StudentDao;
+import com.educational.educational.models.Students;
 import com.educational.educational.models.Users;
+import com.educational.educational.schemas.StudentsUserSchema;
 import com.educational.educational.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,9 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class StudentController {
 
@@ -26,10 +27,14 @@ public class StudentController {
     private JWTUtil jwtUtil;
 
     @RequestMapping(value = "api/student/{courseID}/{studentCode}", method = RequestMethod.GET)
-    public ResponseEntity<ResponseBean> studentAddToCourse(@RequestHeader(value = "X-token") String token ,@PathVariable Integer courseID, @PathVariable String studentCode) {
+    public ResponseEntity<StudentResponseBean> studentAddToCourse(@RequestHeader(value = "X-token") String token , @PathVariable Integer courseID, @PathVariable String studentCode) {
 
         ResponseBean responseBean = new ResponseBean();
         responseBean.setDate(new Date().toString());
+
+        StudentBean studentBean = new StudentBean();
+
+        StudentResponseBean studentResponseBean = new StudentResponseBean();
 
         String userID = jwtUtil.getKey(token);
 
@@ -38,23 +43,33 @@ public class StudentController {
             responseBean.setCodeError("401");
             responseBean.setMsgError("Token no valido");
 
-            return new ResponseEntity<ResponseBean>(responseBean, HttpStatus.FORBIDDEN);
+            studentResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<StudentResponseBean>(studentResponseBean, HttpStatus.FORBIDDEN);
 
         }
 
-        boolean createdStudent = StudentDao.addStudentToCourse(parseInt(userID), courseID, studentCode);
+        Users createdStudent = StudentDao.addStudentToCourse(parseInt(userID), courseID, studentCode);
 
-        if( !createdStudent ) {
+        if( createdStudent == null ) {
             responseBean.setCodeError("409");
             responseBean.setMsgError("Datos erroneos");
+            studentResponseBean.setAPI(responseBean);
 
-            return new ResponseEntity<ResponseBean>(responseBean, HttpStatus.CONFLICT);
+            return new ResponseEntity<StudentResponseBean>(studentResponseBean, HttpStatus.CONFLICT);
         }
 
         responseBean.setCodeError("201");
         responseBean.setMsgError("Estudiante agregado");
 
-        return new ResponseEntity<ResponseBean>(responseBean, HttpStatus.CREATED);
+        studentBean.setCode(createdStudent.getCode());
+        studentBean.setEmail(createdStudent.getEmail());
+        studentBean.setName(createdStudent.getName());
+
+        studentResponseBean.setAPI(responseBean);
+        studentResponseBean.setResult(studentBean);
+
+        return new ResponseEntity<StudentResponseBean>(studentResponseBean, HttpStatus.CREATED);
 
     }
 
@@ -89,4 +104,44 @@ public class StudentController {
 
     }
 
-}
+    @RequestMapping(value = "api/students/{courseID}", method = RequestMethod.GET)
+    public ResponseEntity<StudentsResponseBean> getStudents(@RequestHeader(value = "X-token") String token , @PathVariable Integer courseID) {
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        StudentsResponseBean studentsResponseBean = new StudentsResponseBean();
+
+        String userID = jwtUtil.getKey(token);
+        if(userID == null) {
+
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+
+            studentsResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<StudentsResponseBean>(studentsResponseBean, HttpStatus.FORBIDDEN);
+
+        }
+
+        List<StudentBean> result = StudentDao.getStudents(courseID);
+        if(result == null) {
+            responseBean.setCodeError("403");
+            responseBean.setMsgError("No autorizado");
+
+            studentsResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<StudentsResponseBean>(studentsResponseBean, HttpStatus.UNAUTHORIZED);
+        }
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Estudiantes");
+
+        studentsResponseBean.setAPI(responseBean);
+        studentsResponseBean.setResult(result);
+
+        return new ResponseEntity<StudentsResponseBean>(studentsResponseBean, HttpStatus.OK);
+
+    }
+
+    }

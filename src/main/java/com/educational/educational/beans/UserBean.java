@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserResponseBean implements Serializable {
+public class UserBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

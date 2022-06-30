@@ -3,14 +3,12 @@ package com.educational.educational.beans;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
-public class CoursesResponseBean {
+public class MaterialRecentBean extends MaterialBean {
 
     @Getter @Setter
-    private ResponseBean API;
+    private String courseName;
 
     @Getter @Setter
-    private List<CourseBean> result;
+    private Integer courseID;
 
 }

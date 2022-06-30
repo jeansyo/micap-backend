@@ -4,14 +4,12 @@ import com.educational.educational.models.Materials;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+public class MaterialResponseBean {
 
-public class MaterialsResponseBean {
-
-    @Getter @Setter
+    @Getter
+    @Setter
     private ResponseBean API;
 
     @Getter @Setter
-    private List<MaterialBean> result;
-
+    private MaterialBean result;
 }

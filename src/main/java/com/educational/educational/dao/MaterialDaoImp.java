@@ -1,9 +1,11 @@
 package com.educational.educational.dao;
 
-import ch.qos.logback.core.CoreConstants;
+import com.educational.educational.beans.MaterialRecentBean;
 import com.educational.educational.models.Courses;
 import com.educational.educational.models.Materials;
+import com.educational.educational.models.Students;
 import com.educational.educational.models.Users;
+import com.educational.educational.schemas.MaterialsRecentSchema;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +13,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 @Transactional
@@ -21,20 +25,20 @@ public class MaterialDaoImp implements MaterialDao {
 
     @Override
     public List<Materials> getMaterials(Integer userID, Integer courseID) {
-        String queryCourse = "FROM Courses WHERE user = :user AND id = :course AND status = 1";
-
-        List<Courses> resultCourse = entityManager.createQuery(queryCourse, Courses.class)
-                .setParameter("user", userID)
-                .setParameter("course", courseID)
-                .getResultList();
-
-        if( resultCourse.isEmpty() ) {
-            return null;
-        }
-
-        if(resultCourse.get(0).getUser() != userID ) {
-            return null;
-        }
+//        String queryCourse = "FROM Courses WHERE user = :user AND id = :course AND status = 1";
+//
+//        List<Courses> resultCourse = entityManager.createQuery(queryCourse, Courses.class)
+//                .setParameter("user", userID)
+//                .setParameter("course", courseID)
+//                .getResultList();
+//
+//        if( resultCourse.isEmpty() ) {
+//            return null;
+//        }
+//
+//        if(resultCourse.get(0).getUser() != userID ) {
+//            return null;
+//        }
 
         String queryMaterials = "FROM Materials WHERE course = :course AND status = 1";
 
@@ -45,7 +49,7 @@ public class MaterialDaoImp implements MaterialDao {
     }
 
     @Override
-    public boolean createMaterial(Materials material, Integer userID) {
+    public Materials createMaterial(Materials material, Integer userID) {
 
         String query = "FROM Courses WHERE id = :course AND user = :user AND status = 1";
 
@@ -55,12 +59,13 @@ public class MaterialDaoImp implements MaterialDao {
                         .getResultList();
 
         if( resultCourse.isEmpty() ) {
-            return false;
+            return null;
         }
 
-        entityManager.merge(material);
+        Materials newMaterial = entityManager.merge(material);
 
-        return true;
+        return newMaterial;
+
     }
 
     @Override
@@ -98,7 +103,7 @@ public class MaterialDaoImp implements MaterialDao {
 
 
     @Override
-    public List<Materials> getMaterialsRecent(Integer userID) {
+    public List<MaterialRecentBean> getMaterialsRecent(Integer userID) {
 
         String queryUser = "FROM Users WHERE id = :user AND status = 1";
         List<Users> resultUser = entityManager.createQuery(queryUser, Users.class)
@@ -109,37 +114,55 @@ public class MaterialDaoImp implements MaterialDao {
             return null;
         }
 
-        ArrayList<Materials> resultMaterialRecent = new ArrayList<Materials>();
+        ArrayList<MaterialRecentBean> resultsMaterialByCourse = new ArrayList<MaterialRecentBean>();
 
-        String queryCourses = "FROM Courses WHERE user = :user AND status = 1";
-        List<Courses> resultCourses = entityManager.createQuery(queryCourses, Courses.class)
+        String queryStudents = "FROM Students WHERE user = :user";
+        List<Students> resultStudents = entityManager.createQuery(queryStudents, Students.class)
                 .setParameter("user", userID)
                 .getResultList();
 
-        if (resultCourses.isEmpty()) {
-            return resultMaterialRecent;
+        if (resultStudents.isEmpty()) {
+            return resultsMaterialByCourse;
         }
 
-        Integer coursesSize = resultCourses.size();
-        System.out.println(coursesSize);
+        resultStudents.forEach(student -> {
 
-        for(int i = 0; i < coursesSize; i++) {
-            System.out.println(i);
-            System.out.println(resultCourses.get(i).getName());
-
+            String queryCurrentCourse = "FROM Courses WHERE id = :course AND status = 1";
             String queryCurrentMaterialOfCourse = "FROM Materials WHERE course = :course AND status = 1";
+
+
             List<Materials> resultCurrentMaterialOfCourse = entityManager.createQuery(queryCurrentMaterialOfCourse, Materials.class)
-                    .setParameter("course", resultCourses.get(i).getId())
+                    .setParameter("course", student.getCourse())
                     .getResultList();
 
-            if (!resultCurrentMaterialOfCourse.isEmpty()) {
-                System.out.println(resultCurrentMaterialOfCourse.get(0).getCourse());
-                resultMaterialRecent.add(resultCurrentMaterialOfCourse.get(i));
+            List<Courses> resultCurrentCourse = entityManager.createQuery(queryCurrentCourse, Courses.class)
+                    .setParameter("course", student.getCourse())
+                    .getResultList();
+
+            if( !resultCurrentMaterialOfCourse.isEmpty() ) {
+
+                resultCurrentMaterialOfCourse.forEach(material -> {
+
+                    MaterialRecentBean materialRecentBean = new MaterialRecentBean();
+
+                    materialRecentBean.setCourseID(material.getCourse());
+                    materialRecentBean.setCourseName(resultCurrentCourse.get(0).getName());
+
+                    materialRecentBean.setDate(material.getDate());
+                    materialRecentBean.setId(material.getId());
+                    materialRecentBean.setLink(material.getLink());
+                    materialRecentBean.setName(material.getName());
+                    materialRecentBean.setType(material.getType());
+
+                    resultsMaterialByCourse.add(materialRecentBean);
+
+                });
+
+//                resultsMaterialByCourse.addAll(resultCurrentMaterialOfCourse);
             }
+        });
 
-        }
-
-        return resultMaterialRecent;
+        return resultsMaterialByCourse;
 
     }
 }
