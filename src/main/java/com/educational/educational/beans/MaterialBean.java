@@ -9,6 +9,9 @@ public class MaterialBean {
     private String name;
 
     @Getter @Setter
+    private String filename;
+
+    @Getter @Setter
     private String link;
 
     @Getter @Setter

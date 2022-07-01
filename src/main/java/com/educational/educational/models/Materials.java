@@ -18,8 +18,11 @@ public class Materials {
     @Getter @Setter @Column(name = "name")
     private String name;
 
+    @Getter @Setter @Column(name = "filename")
+    private String filename;
+
     @Getter @Setter @Column(name="link")
-    private String link;
+    private String link = "";
 
     @Getter @Setter @Column(name="type")
     private Integer type;

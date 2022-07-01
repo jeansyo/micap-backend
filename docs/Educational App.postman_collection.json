@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "50c3b539-e353-4352-8f3b-10d0b5b4335a",
 		"name": "Educational App",
+		"description": "Documentation for API consumption",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [

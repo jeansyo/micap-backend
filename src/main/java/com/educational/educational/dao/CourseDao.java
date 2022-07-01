@@ -1,11 +1,12 @@
 package com.educational.educational.dao;
 
+import com.educational.educational.beans.CourseBean;
 import com.educational.educational.models.Courses;
 
 import java.util.List;
 
 public interface CourseDao {
-    List<Courses> getCourses(String userID);
+    List<CourseBean> getCourses(String userID);
 
     Courses createCourse(Courses course);
 

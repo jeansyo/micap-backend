@@ -1,5 +1,6 @@
 package com.educational.educational.dao;
 
+import com.educational.educational.beans.CourseBean;
 import com.educational.educational.models.Courses;
 import com.educational.educational.models.Students;
 import org.springframework.stereotype.Repository;
@@ -20,7 +21,7 @@ public class CourseDaoImp implements CourseDao {
     private EntityManager entityManager;
 
     @Override
-    public List<Courses> getCourses(String userID) {
+    public List<CourseBean> getCourses(String userID) {
 
         String query = "FROM Courses WHERE user = :user AND status = 1";
 
@@ -28,7 +29,24 @@ public class CourseDaoImp implements CourseDao {
                 .setParameter("user", parseInt(userID))
                 .getResultList();
 
-        return result;
+        ArrayList<CourseBean> courseBeansList = new ArrayList<CourseBean>();
+
+        result.forEach(courses -> {
+            String queryStudents = "FROM Students WHERE course = :course";
+            List<Students> resultStudents = entityManager.createQuery(queryStudents, Students.class)
+                    .setParameter("course", courses.getId())
+                    .getResultList();
+
+            CourseBean courseBean = new CourseBean();
+            courseBean.setId(courses.getId());
+            courseBean.setName(courses.getName());
+            courseBean.setStudents(resultStudents.size());
+
+            courseBeansList.add(courseBean);
+
+        });
+
+        return courseBeansList;
 
     }
 

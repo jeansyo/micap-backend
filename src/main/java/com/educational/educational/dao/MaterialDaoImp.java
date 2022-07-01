@@ -24,20 +24,6 @@ public class MaterialDaoImp implements MaterialDao {
 
     @Override
     public List<Materials> getMaterials(Integer userID, Integer courseID) {
-//        String queryCourse = "FROM Courses WHERE user = :user AND id = :course AND status = 1";
-//
-//        List<Courses> resultCourse = entityManager.createQuery(queryCourse, Courses.class)
-//                .setParameter("user", userID)
-//                .setParameter("course", courseID)
-//                .getResultList();
-//
-//        if( resultCourse.isEmpty() ) {
-//            return null;
-//        }
-//
-//        if(resultCourse.get(0).getUser() != userID ) {
-//            return null;
-//        }
 
         String queryMaterials = "FROM Materials WHERE course = :course AND status = 1";
 
@@ -152,12 +138,11 @@ public class MaterialDaoImp implements MaterialDao {
                     materialRecentBean.setLink(material.getLink());
                     materialRecentBean.setName(material.getName());
                     materialRecentBean.setType(material.getType());
+                    materialRecentBean.setFilename(material.getFilename());
 
                     resultsMaterialByCourse.add(materialRecentBean);
 
                 });
-
-//                resultsMaterialByCourse.addAll(resultCurrentMaterialOfCourse);
             }
         });
 

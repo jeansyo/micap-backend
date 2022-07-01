@@ -49,20 +49,12 @@ public class CourseController {
 
         }
 
-        ArrayList<CourseBean> resultCourses = new ArrayList<CourseBean>();
-        List<Courses> result = CourseDao.getCourses(userID);
-
-        result.forEach(course -> {
-            CourseBean courseBean = new CourseBean();
-            courseBean.setId(course.getId());
-            courseBean.setName(course.getName());
-            resultCourses.add(courseBean);
-        });
+        List<CourseBean> result = CourseDao.getCourses(userID);
 
         responseBean.setCodeError("200");
         responseBean.setMsgError("Cursos encontrados");
         coursesResponseBean.setAPI(responseBean);
-        coursesResponseBean.setResult(resultCourses);
+        coursesResponseBean.setResult(result);
 
         return new ResponseEntity<CoursesResponseBean>(coursesResponseBean, HttpStatus.OK);
 

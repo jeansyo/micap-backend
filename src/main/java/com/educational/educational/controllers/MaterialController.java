@@ -63,6 +63,7 @@ public class MaterialController {
             materialBean.setId(material.getId());
             materialBean.setType(material.getType());
             materialBean.setDate(material.getDate());
+            materialBean.setFilename(material.getFilename());
 
             resultsMaterial.add(materialBean);
 
@@ -116,6 +117,7 @@ public class MaterialController {
         materialBean.setType(materialCreated.getType());
         materialBean.setLink(materialCreated.getLink());
         materialBean.setId(materialCreated.getId());
+        materialBean.setFilename(materialCreated.getFilename());
 
         responseBean.setCodeError("201");
         responseBean.setMsgError("Material creado exitosamente");
@@ -193,22 +195,6 @@ public class MaterialController {
 
             return new ResponseEntity<MaterialsRecentResponseBean>(materialsRecentResponseBean, HttpStatus.CONFLICT);
         }
-
-//        ArrayList<MaterialBean> resultsMaterials = new ArrayList<MaterialBean>();
-//
-//        resultMaterials.forEach(material -> {
-//
-//            MaterialBean materialBean = new MaterialBean();
-//
-//            materialBean.setId(material.getId());
-//            materialBean.setName(material.getName());
-//            materialBean.setDate(material.getDate());
-//            materialBean.setLink(material.getLink());
-//            materialBean.setType(material.getType());
-//
-//            resultsMaterials.add(materialBean);
-//
-//        });
 
         responseBean.setCodeError("200");
         responseBean.setMsgError("Materiales recientes");
