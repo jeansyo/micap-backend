@@ -5,6 +5,8 @@ import com.educational.educational.beans.UserBean;
 import com.educational.educational.dao.AuthDao;
 import com.educational.educational.beans.ResponseBean;
 import com.educational.educational.models.Users;
+import com.educational.educational.services.AuthService;
+import com.educational.educational.services.IAuthService;
 import com.educational.educational.utils.JWTUtil;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
@@ -72,6 +74,7 @@ public class AuthController {
         response.setUser(userResponseBean);
 
         return new ResponseEntity<AuthResponseBean>(response, HttpStatus.NOT_FOUND);
+
     }
 
     @RequestMapping(value = "api/register", method = RequestMethod.POST)

@@ -95,6 +95,8 @@ public class CourseController {
 
         courseBean.setId(courseCreated.getId());
         courseBean.setName(courseCreated.getName());
+        courseBean.setRecommended(courseCreated.getRecommended());
+        courseBean.setClassname(courseCreated.getClassname());
 
         responseBean.setCodeError("201");
         responseBean.setMsgError("Curso creado exitosamente.");
@@ -179,6 +181,8 @@ public class CourseController {
 
         courseBean.setName(result.getName());
         courseBean.setId(result.getId());
+        courseBean.setClassname(result.getClassname());
+        courseBean.setRecommended(result.getRecommended());
 
         responseBean.setCodeError("200");
         responseBean.setMsgError("Curso encontrado");

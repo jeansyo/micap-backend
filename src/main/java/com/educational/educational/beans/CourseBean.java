@@ -14,4 +14,10 @@ public class CourseBean {
     @Getter @Setter
     private Integer students;
 
+    @Getter @Setter
+    private String classname;
+
+    @Getter @Setter
+    private String recommended;
+
 }

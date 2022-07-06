@@ -23,4 +23,10 @@ public class Courses {
     @Getter @Setter @Column(name = "status")
     private Integer status = 1;
 
+    @Getter @Setter @Column(name = "classname")
+    private String classname;
+
+    @Getter @Setter @Column(name = "recommended")
+    private String recommended;
+
 }
