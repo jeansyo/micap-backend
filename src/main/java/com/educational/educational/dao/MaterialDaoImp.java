@@ -1,10 +1,8 @@
 package com.educational.educational.dao;
 
 import com.educational.educational.beans.MaterialRecentBean;
-import com.educational.educational.models.Courses;
-import com.educational.educational.models.Materials;
-import com.educational.educational.models.Students;
-import com.educational.educational.models.Users;
+import com.educational.educational.beans.PercentageBean;
+import com.educational.educational.models.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,5 +146,74 @@ public class MaterialDaoImp implements MaterialDao {
 
         return resultsMaterialByCourse;
 
+    }
+
+    @Override
+    public boolean downloadMaterial(Downloads newDownload) {
+
+        String queryCourse = "FROM Courses WHERE id = :course AND status = 1";
+        List<Courses> responseCourse = entityManager.createQuery(queryCourse, Courses.class)
+                .setParameter("course", newDownload.getCourse())
+                .getResultList();
+
+        if(responseCourse.isEmpty()) {
+            return false;
+        }
+
+        String queryMaterial = "FROM Materials WHERE id = :material AND status=1";
+        List<Materials> responseMaterial = entityManager.createQuery(queryMaterial, Materials.class)
+                .setParameter("material", newDownload.getMaterial())
+                .getResultList();
+
+        if( responseMaterial.isEmpty() ) {
+            return false;
+        }
+
+        String queryDownload = "FROM Downloads WHERE user = :user AND course = :course AND material = :material";
+        List<Downloads> responseDownload = entityManager.createQuery(queryDownload, Downloads.class)
+                .setParameter("user", newDownload.getUser())
+                .setParameter("course", newDownload.getCourse())
+                .setParameter("material", newDownload.getMaterial())
+                .getResultList();
+
+        if(responseDownload.size() > 0) {
+            return false;
+        }
+
+        Downloads saveDownload = entityManager.merge(newDownload);
+        return true;
+    }
+
+    @Override
+    public PercentageBean downloadPercentageMaterial(Integer userID, Integer courseID) {
+
+        String queryCourse = "FROM Courses WHERE id = :course AND status=1";
+        List<Courses> responseCourse = entityManager.createQuery(queryCourse, Courses.class)
+                .setParameter("course", courseID)
+                .getResultList();
+
+        if(responseCourse.isEmpty()) {
+            return null;
+        }
+
+        String queryMaterials = "FROM Materials WHERE course = :course AND status=1";
+        List<Materials> responseMaterial = entityManager.createQuery(queryMaterials, Materials.class)
+                .setParameter("course", courseID)
+                .getResultList();
+
+        String queryDownload = "FROM Downloads WHERE user = :user AND course = :course";
+        List<Downloads> responseDownloads = entityManager.createQuery(queryDownload, Downloads.class)
+                .setParameter("user", userID)
+                .setParameter("course", courseID)
+                .getResultList();
+
+        Integer sizeMaterials = responseMaterial.size();
+        Integer sizeDownload = responseDownloads.size();
+
+        PercentageBean percentageBean = new PercentageBean();
+        percentageBean.setTotal(sizeMaterials);
+        percentageBean.setDownloads(sizeDownload);
+
+        return percentageBean;
     }
 }

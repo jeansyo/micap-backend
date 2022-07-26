@@ -35,4 +35,5 @@ public class Materials {
 
     @Getter @Setter @Column(name="date")
     private String date = new Date().toString();
+
 }

@@ -2,6 +2,7 @@ package com.educational.educational.controllers;
 
 import com.educational.educational.beans.*;
 import com.educational.educational.dao.MaterialDao;
+import com.educational.educational.models.Downloads;
 import com.educational.educational.models.Materials;
 import com.educational.educational.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,7 +167,6 @@ public class MaterialController {
 
     }
 
-
     @RequestMapping(value = "api/materials/recent", method = RequestMethod.GET)
     public ResponseEntity<MaterialsRecentResponseBean> getMaterialsRecentByCourse(@RequestHeader( value = "X-token" ) String token ) {
 
@@ -203,6 +203,87 @@ public class MaterialController {
         materialsRecentResponseBean.setResult(resultMaterials);
 
         return new ResponseEntity<MaterialsRecentResponseBean>(materialsRecentResponseBean, HttpStatus.OK);
+
+    }
+
+
+    @RequestMapping(value = "api/materials/download/{courseID}/{materialID}", method = RequestMethod.GET)
+    public ResponseEntity<MaterialsRecentResponseBean> getMaterialsDownloadMaterial(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer materialID, @PathVariable Integer courseID ) {
+
+        MaterialsRecentResponseBean materialsRecentResponseBean = new MaterialsRecentResponseBean();
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        String userID = jwtUtil.getKey(token);
+        if(userID == null) {
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+
+            materialsRecentResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<MaterialsRecentResponseBean>(materialsRecentResponseBean, HttpStatus.FORBIDDEN);
+        }
+
+        Downloads newDownload = new Downloads();
+        newDownload.setMaterial(materialID);
+        newDownload.setUser(parseInt(userID));
+        newDownload.setCourse(courseID);
+
+        boolean resultMaterials = MaterialDao.downloadMaterial(newDownload);
+
+        if( resultMaterials == false ) {
+            responseBean.setCodeError("409");
+            responseBean.setMsgError("Datos erroneos");
+
+            materialsRecentResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<MaterialsRecentResponseBean>(materialsRecentResponseBean, HttpStatus.CONFLICT);
+        }
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Materiales recientes");
+
+        materialsRecentResponseBean.setAPI(responseBean);
+
+        return new ResponseEntity<MaterialsRecentResponseBean>(materialsRecentResponseBean, HttpStatus.OK);
+
+    }
+
+    @RequestMapping(value = "api/materials/download/{courseID}", method = RequestMethod.GET)
+    public ResponseEntity<PercentageResponseBean> getMaterialsPercentageDownloadMaterial(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID ) {
+
+        PercentageResponseBean percentageResponseBean = new PercentageResponseBean();
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        String userID = jwtUtil.getKey(token);
+        if(userID == null) {
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+
+            return new ResponseEntity<PercentageResponseBean>(percentageResponseBean, HttpStatus.FORBIDDEN);
+        }
+
+        PercentageBean resultMaterials = MaterialDao.downloadPercentageMaterial(parseInt(userID), courseID);
+
+        if( resultMaterials == null ) {
+            responseBean.setCodeError("409");
+            responseBean.setMsgError("Datos erroneos");
+
+            percentageResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<PercentageResponseBean>(percentageResponseBean, HttpStatus.CONFLICT);
+        }
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Materiales recientes");
+
+        percentageResponseBean.setAPI(responseBean);
+        percentageResponseBean.setResult(resultMaterials);
+
+        return new ResponseEntity<PercentageResponseBean>(percentageResponseBean, HttpStatus.OK);
 
     }
 
