@@ -2,10 +2,7 @@ package com.educational.educational.controllers;
 
 import com.educational.educational.beans.*;
 import com.educational.educational.dao.CourseDao;
-import com.educational.educational.dto.EvalDTO;
-import com.educational.educational.dto.EvaluationDTO;
-import com.educational.educational.dto.QuestionDTO;
-import com.educational.educational.dto.ScoreDTO;
+import com.educational.educational.dto.*;
 import com.educational.educational.models.Courses;
 import com.educational.educational.models.Evaluations;
 import com.educational.educational.models.Questions;
@@ -419,11 +416,142 @@ public class CourseController {
 
         ScoreDTO result = CourseDao.makeTest(evalDTO, parseInt(userID), testID);
 
+        if(result==null) {
+            return new ResponseEntity<ScoreDTO>(scoreDTOTest, HttpStatus.BAD_REQUEST);
+        }
 
         responseBean.setCodeError("200");
         responseBean.setMsgError("Cursos encontrados");
 
         return new ResponseEntity<ScoreDTO>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "api/course/{courseID}/evaluations/available", method = RequestMethod.GET)
+    public ResponseEntity<List<Evaluations>> getEvaluationsAvaliable(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID) {
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        List<Evaluations> scoreDTOTest = new ArrayList<>();
+
+        CoursesResponseBean coursesResponseBean = new CoursesResponseBean();
+
+        String userID = jwtUtil.getKey(token);
+
+        if(userID == null) {
+
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+            coursesResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<List<Evaluations>>(scoreDTOTest, HttpStatus.FORBIDDEN);
+
+        }
+
+        List<Evaluations> result = CourseDao.avalaibleEvaluations(parseInt(userID), courseID);
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Cursos encontrados");
+
+        return new ResponseEntity<List<Evaluations>>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "api/course/{courseID}/evaluations/resolved", method = RequestMethod.GET)
+    public ResponseEntity<List<EvaluationResolvedDTO>> getEvaluationsResolved(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer courseID) {
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        List<EvaluationResolvedDTO> scoreDTOTest = new ArrayList<>();
+
+        CoursesResponseBean coursesResponseBean = new CoursesResponseBean();
+
+        String userID = jwtUtil.getKey(token);
+
+        if(userID == null) {
+
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+            coursesResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<List<EvaluationResolvedDTO>>(scoreDTOTest, HttpStatus.FORBIDDEN);
+
+        }
+
+        List<EvaluationResolvedDTO> result = CourseDao.resolvedEvaluations(parseInt(userID), courseID);
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Cursos encontrados");
+
+        return new ResponseEntity<List<EvaluationResolvedDTO>>(result, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "api/course/evaluation/remove/{evaluationID}", method = RequestMethod.DELETE)
+    public ResponseEntity<ResponseBean> removeEvaluation(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer evaluationID) {
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        List<EvaluationResolvedDTO> scoreDTOTest = new ArrayList<>();
+
+        CoursesResponseBean coursesResponseBean = new CoursesResponseBean();
+
+        String userID = jwtUtil.getKey(token);
+
+        if(userID == null) {
+
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+            coursesResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<ResponseBean>(responseBean, HttpStatus.FORBIDDEN);
+
+        }
+
+        boolean result = CourseDao.removeEvaluation(parseInt(userID), evaluationID);
+
+        if( !result ) {
+            responseBean.setCodeError("400");
+            responseBean.setMsgError("Error al eliminar");
+            return new ResponseEntity<ResponseBean>(responseBean, HttpStatus.BAD_REQUEST);
+        }
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Evaluacion eliminada");
+
+        return new ResponseEntity<ResponseBean>(responseBean, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "api/course/evaluation/{evaluationID}/resolved", method = RequestMethod.GET)
+    public ResponseEntity<List<EvaluationResultDTO>> getEvaluationsResolvedByStudent(@RequestHeader( value = "X-token" ) String token, @PathVariable Integer evaluationID) {
+
+        ResponseBean responseBean = new ResponseBean();
+        responseBean.setDate(new Date().toString());
+
+        List<EvaluationResultDTO> scoreDTOTest = new ArrayList<>();
+
+        CoursesResponseBean coursesResponseBean = new CoursesResponseBean();
+
+        String userID = jwtUtil.getKey(token);
+
+        if(userID == null) {
+
+            responseBean.setCodeError("401");
+            responseBean.setMsgError("Token no valido");
+            coursesResponseBean.setAPI(responseBean);
+
+            return new ResponseEntity<List<EvaluationResultDTO>>(scoreDTOTest, HttpStatus.FORBIDDEN);
+
+        }
+
+        List<EvaluationResultDTO> result = CourseDao.getResolvedStudentEvaluation(parseInt(userID), evaluationID);
+
+        responseBean.setCodeError("200");
+        responseBean.setMsgError("Cursos encontrados");
+
+        return new ResponseEntity<List<EvaluationResultDTO>>(result, HttpStatus.OK);
     }
 
     }

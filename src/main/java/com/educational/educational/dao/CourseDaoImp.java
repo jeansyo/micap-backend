@@ -2,11 +2,10 @@ package com.educational.educational.dao;
 
 import com.educational.educational.beans.CourseBean;
 import com.educational.educational.dto.EvalDTO;
+import com.educational.educational.dto.EvaluationResolvedDTO;
+import com.educational.educational.dto.EvaluationResultDTO;
 import com.educational.educational.dto.ScoreDTO;
-import com.educational.educational.models.Courses;
-import com.educational.educational.models.Evaluations;
-import com.educational.educational.models.Questions;
-import com.educational.educational.models.Students;
+import com.educational.educational.models.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -179,6 +178,17 @@ public class CourseDaoImp implements CourseDao {
     @Override
     public ScoreDTO makeTest(List<EvalDTO> evalDTO, Integer userID, Integer testID) {
 
+        String queryScores = "FROM Scores WHERE evaluation=:evaluation AND user=:user";
+        List<Scores> resultScores = entityManager.createQuery(queryScores, Scores.class)
+                .setParameter("evaluation", testID)
+                .setParameter("user", userID)
+                .getResultList();
+
+        if(!resultScores.isEmpty()) {
+            return null;
+        }
+
+
         String queryy = "FROM Questions WHERE evaluation=:evaluation";
         List<Questions> results = entityManager.createQuery(queryy, Questions.class)
                         .setParameter("evaluation", testID)
@@ -203,15 +213,120 @@ public class CourseDaoImp implements CourseDao {
 
 
         ScoreDTO scoreDTO = new ScoreDTO();
-        scoreDTO.setScore(score.size());
-        scoreDTO.setTotal(total);
         scoreDTO.setEvaluation(testID);
 
-        Integer percentage = score.size() / total;
+        int percent = (int)((score.size() * 100.0f) / total);
+        scoreDTO.setScore(percent);
 
-        System.out.println(percentage);
+        Scores newScore = new Scores();
+        newScore.setScore(percent);
+        newScore.setUser(userID);
+        newScore.setEvaluation(testID);
+
+        entityManager.merge(newScore);
 
         return scoreDTO;
+    }
+
+    @Override
+    public List<Evaluations> avalaibleEvaluations(Integer userID, Integer courseID) {
+
+        String queryEvaluations = "FROM Evaluations WHERE course=:course AND status=1";
+        List<Evaluations> resultEvaluations = entityManager.createQuery(queryEvaluations, Evaluations.class)
+                .setParameter("course", courseID)
+                .getResultList();
+
+        System.out.println(resultEvaluations.size());
+
+
+        List<Evaluations> responseEvaluations = new ArrayList<>();
+        List<Integer> evals = new ArrayList<>();
+
+        resultEvaluations.forEach(evaluations -> {
+            String queryScores = "FROM Scores WHERE user=:user AND evaluation=:evaluation";
+            List<Scores> resultScores = entityManager.createQuery(queryScores, Scores.class)
+                    .setParameter("user", userID)
+                    .setParameter("evaluation", evaluations.getId())
+                    .getResultList();
+            if(resultScores.isEmpty()) {
+                evals.add(evaluations.getId());
+            }
+        });
+
+
+        resultEvaluations.forEach(evale -> {
+            if(evals.contains(evale.getId())) {
+                responseEvaluations.add(evale);
+            }
+        });
+        System.out.println(evals.size());
+
+        return responseEvaluations;
+    }
+
+    @Override
+    public List<EvaluationResolvedDTO> resolvedEvaluations(Integer userID, Integer courseID) {
+        String queryEvaluations = "FROM Evaluations WHERE course=:course AND status=1";
+        List<Evaluations> resultEvaluations = entityManager.createQuery(queryEvaluations, Evaluations.class)
+                .setParameter("course", courseID)
+                .getResultList();
+
+
+        List<EvaluationResolvedDTO> responseEvaluations = new ArrayList<>();
+
+        resultEvaluations.forEach(evaluations -> {
+            String queryScores = "FROM Scores WHERE user=:user AND evaluation=:evaluation";
+            List<Scores> resultScores = entityManager.createQuery(queryScores, Scores.class)
+                    .setParameter("user", userID)
+                    .setParameter("evaluation", evaluations.getId())
+                    .getResultList();
+            if(!resultScores.isEmpty()){
+                EvaluationResolvedDTO evaluationResolvedDTO = new EvaluationResolvedDTO();
+                evaluationResolvedDTO.setEnd(evaluations.getEnd());
+                evaluationResolvedDTO.setStart(evaluations.getStart());
+                evaluationResolvedDTO.setId(evaluations.getId());
+                evaluationResolvedDTO.setScore(resultScores.get(0).getScore());
+                responseEvaluations.add(evaluationResolvedDTO);
+            }
+        });
+
+        return responseEvaluations;
+    }
+
+    @Override
+    public boolean removeEvaluation(int parseInt, Integer evaluationID) {
+        Evaluations result = entityManager.find(Evaluations.class, evaluationID);
+        result.setStatus(0);
+        entityManager.flush();
+        return true;
+
+    }
+
+    @Override
+    public List<EvaluationResultDTO> getResolvedStudentEvaluation(int parseInt, Integer evaluationID) {
+        String queryScore = "FROM Scores WHERE evaluation=:evaluation";
+        List<Scores> resultScores = entityManager.createQuery(queryScore, Scores.class)
+                .setParameter("evaluation", evaluationID)
+                .getResultList();
+
+        List<EvaluationResultDTO> evaluationsResult = new ArrayList<>();
+
+        resultScores.forEach(score -> {
+            String queryUser = "FROM Users WHERE id=:user and status=1";
+            List<Users> resultUser = entityManager.createQuery(queryUser, Users.class)
+                    .setParameter("user", score.getUser())
+                    .getResultList();
+
+            if(!resultUser.isEmpty()) {
+                EvaluationResultDTO evaluationResultDTO = new EvaluationResultDTO();
+                evaluationResultDTO.setCodUsr(resultUser.get(0).getCode());
+                evaluationResultDTO.setUsername(resultUser.get(0).getName());
+                evaluationResultDTO.setScore(score.getScore());
+                evaluationsResult.add(evaluationResultDTO);
+            }
+
+        });
+        return evaluationsResult;
     }
 
 
